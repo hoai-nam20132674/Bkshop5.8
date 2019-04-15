@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Http\Requests\loginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Socialite;
 
 class LoginController extends Controller
 {
@@ -44,31 +45,42 @@ class LoginController extends Controller
         return Auth::guard('users_client');
     }
 
-    public function getLogin(){
-        return view('auth_client.login');
-    }
-
-    public function postLogin(loginRequest $request){
-        $login =array(
-            'email'=>$request->email,
-            'password'=>$request->password
-        );
-        if(Auth::guard('users_client')->attempt($login)){
-            return redirect('/');
-        }
-        else{
-            return redirect()->back()->with(['flash_level'=>'danger','flash_message'=>'Tài khoản hoặc mật khẩu không chính xác']);
-        }
-        
-    }
-    public function logout(Request $request)
+    public function redirectToProvider()
     {
-        $this->guard()->logout();
-
-        $request->session()->flush();
-
-        $request->session()->regenerate();
-
-        return redirect('/');
+        return Socialite::driver('facebook')->redirect();
     }
+
+    public function handleProviderCallback()
+    {
+        $user = Socialite::driver('facebook')->user();
+        return $user->name;
+    }
+
+    // public function getLogin(){
+    //     return view('auth_client.login');
+    // }
+
+    // public function postLogin(loginRequest $request){
+    //     $login =array(
+    //         'email'=>$request->email,
+    //         'password'=>$request->password
+    //     );
+    //     if(Auth::guard('users_client')->attempt($login)){
+    //         return redirect('/');
+    //     }
+    //     else{
+    //         return redirect()->back()->with(['flash_level'=>'danger','flash_message'=>'Tài khoản hoặc mật khẩu không chính xác']);
+    //     }
+    //
+    // }
+    // public function logout(Request $request)
+    // {
+    //     $this->guard()->logout();
+    //
+    //     $request->session()->flush();
+    //
+    //     $request->session()->regenerate();
+    //
+    //     return redirect('/');
+    // }
 }

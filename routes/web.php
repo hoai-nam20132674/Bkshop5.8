@@ -23,6 +23,13 @@ Route::post('/postLogin',['as'=>'postLogin','uses'=>'Auth\LoginController@postLo
 Route::get('/client-login',['as'=>'clientLogin','uses'=>'AuthClient\LoginController@getLogin']);
 Route::get('/client-logout',['as'=>'clientLogout','uses'=>'AuthClient\LoginController@logout']);
 Route::post('/clientPostLogin',['as'=>'clientPostLogin','uses'=>'AuthClient\LoginController@postLogin']);
+
+// login with social facebook
+Route::get('/login/facebook',['as' => 'loginFacebook','uses' => 'AuthClient\LoginController@redirectToProvider']);
+Route::get('/facebook/callback',['as' => 'loginFacebookCallback','uses' => 'AuthClient\LoginController@handleProviderCallback']);
+
+// end
+
 Route::get('getListUsersResponse',['as'=>'getListUsersResponse','uses'=>'Auth\AdminController@getListUsersResponse']);
 Route::group(['prefix'=>'auth','middleware'=>'auth'], function(){
 	Route::get('trang-chu',['as'=>'authIndex','uses'=>'Auth\AdminController@index']);
